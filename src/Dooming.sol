@@ -10,7 +10,7 @@ import "openzeppelin-contracts/contracts/utils/Strings.sol";
 contract Dooming is ERC721A, Ownable {
     using Strings for uint256;
 
-    mapping(uint256 => string) reason;
+    mapping(uint256 => string[]) reason;
 
     constructor() ERC721A("Dooming", "DOOM") {}
 
@@ -20,19 +20,28 @@ contract Dooming is ERC721A, Ownable {
         override
         returns (string memory)
     {
-        string memory image = string.concat(
-            '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" style="background:#000">',
-            svg.text(
-                string.concat(
-                    svg.prop("x", "20"),
-                    svg.prop("y", "40"),
-                    svg.prop("font-size", "22"),
-                    svg.prop("fill", "white")
-                ),
-                reason[tokenId]
-            ),
-            "</svg>"
-        );
+        string
+            memory image = '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" style="background:#000">';
+
+        string memory reasons = "";
+        uint256 yPos = 40;
+        for (uint256 i = 0; i < reason[tokenId].length; i++) {
+            image = string.concat(
+                image,
+                svg.text(
+                    string.concat(
+                        svg.prop("x", "20"),
+                        svg.prop("y", yPos.toString()),
+                        svg.prop("font-size", "22"),
+                        svg.prop("fill", "white")
+                    ),
+                    reason[tokenId][i]
+                )
+            );
+            reasons = string.concat(reasons, " ", reason[tokenId][i]);
+            yPos += 40;
+        }
+        image = string.concat(image, "</svg>");
 
         string memory json = Base64.encode(
             bytes(
@@ -41,7 +50,7 @@ contract Dooming is ERC721A, Ownable {
                         '{"name": "Moment #',
                         tokenId.toString(),
                         '", "description": "',
-                        reason[tokenId],
+                        reasons,
                         '", "image": "data:image/svg+xml;base64,',
                         Base64.encode(bytes(image)),
                         '"}'
@@ -53,7 +62,10 @@ contract Dooming is ERC721A, Ownable {
         return string(abi.encodePacked("data:application/json;base64,", json));
     }
 
-    function safeMint(address to, string calldata _reason) external onlyOwner {
+    /// @dev Mint a token. Each element in _reason should be <25 characters long, split up long sentences, a space between each line is automatically added.
+    /// @param to address to send token to
+    /// @param _reason array of strings representing the reason of minting this moment.
+    function safeMint(address to, string[] memory _reason) external onlyOwner {
         reason[totalSupply()] = _reason;
         _safeMint(to, 1);
     }
