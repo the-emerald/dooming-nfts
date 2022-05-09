@@ -1,0 +1,6 @@
+openzeppelin-contracts/=lib/openzeppelin-contracts/
+@openzeppelin/=lib/openzeppelin-contracts/
+ERC721A/=lib/ERC721A/contracts/
+forge-std/=lib/forge-std/src/
+ds-test/=lib/forge-std/lib/ds-test/src/
+hot-chain-svg/=lib/hot-chain-svg/contracts/
