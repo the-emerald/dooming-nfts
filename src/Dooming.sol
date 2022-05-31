@@ -21,7 +21,7 @@ contract Dooming is ERC721A, Ownable {
         returns (string memory)
     {
         string
-            memory image = '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" style="background:#000">';
+            memory image = '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" style="background:#202020">';
 
         string memory reasons = "";
         uint256 yPos = 40;
@@ -32,7 +32,8 @@ contract Dooming is ERC721A, Ownable {
                     string.concat(
                         svg.prop("x", "20"),
                         svg.prop("y", yPos.toString()),
-                        svg.prop("font-size", "22"),
+                        svg.prop("font-size", "16"),
+                        svg.prop("font-family", "monospace"),
                         svg.prop("fill", "white")
                     ),
                     reason[tokenId][i]
@@ -62,7 +63,7 @@ contract Dooming is ERC721A, Ownable {
         return string(abi.encodePacked("data:application/json;base64,", json));
     }
 
-    /// @dev Mint a token. Each element in _reason should be <25 characters long, split up long sentences, a space between each line is automatically added.
+    /// @notice Mint a token. Each element in _reason should be <30 characters long, split up long sentences, a space between each line is automatically added.
     /// @param to address to send token to
     /// @param _reason array of strings representing the reason of minting this moment.
     function safeMint(address to, string[] memory _reason) external onlyOwner {
